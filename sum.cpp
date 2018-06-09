@@ -16,7 +16,7 @@ inline void init(){ for (int j = 0; j < N; ++j)
 use the idea of STL containers.
 */
 
-void sum(int *p, int n, vector <int> d){
+inline void sum(int *p, int n, vector <int> d){
 	for (auto& i : d)
     	*p += i;
 }
