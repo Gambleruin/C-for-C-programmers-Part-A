@@ -1,10 +1,14 @@
 /* first assignment convert c into c++ */
 #include <iostream>   //drops .h still available
+#include <string>
+#include <sstream>
 #include <cstdio>  
-#include <cstdlib>  
+#include <cstdlib> 
 
+#include <vector> 
 using namespace std;
 const int N = 40; 
+vector<int> data(N);
 //inline int r_sides(){ return (rand() % sides + 1); }
 
 /*
@@ -18,13 +22,13 @@ void sum(int *p, int n, vector <int> d){
 
 int main(){
 	int accum =0;
-	vector<int> data(N);
 
 	//init the vector
-	for (int j = 0; j < N; ++j) {
+	for (int j = 0; j < N; ++j) 
     	data[j] =j;
 
-	memset( &d, 0, sizeof( d ) );
+	//static memory allocation, this is not needed, 
+	//memset( &data, 0, sizeof( data ) );
 	sum(&accum, N, data);
 
 	//print out the result
