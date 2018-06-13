@@ -237,7 +237,7 @@ class priorityQueue{
 			front =nullptr;
 		}
 
-		void insert(T item, int priority){
+		void insert(const T& item, int priority){
 			Node* tmp;
 			Node* node =new Node(item);
 			node->priority =priority;
@@ -255,7 +255,7 @@ class priorityQueue{
 			}
 		}
 
-		void deleteItem(T item){
+		void deleteItem(const T& item){
 			Node *find =search(item);
 			Node *node =front;
 			if(node ==find)
@@ -267,13 +267,24 @@ class priorityQueue{
 						delete find;
 						return;
 					}
-					node =node->next;l
+					node =node->next;
 				}
 			}
 		}
 
+		const T extractMin(){
+			
+		}
+
+
+
+		friend std::ostream & operator <<(std::ostream &os, const priorityQueue<T> &pq){
+			pq.display(os);
+			return os;
+		}
+
 	private:
-		Node *search(T item)
+		Node *search(const T& item)
 		{
 			Node *node =front;
 			while(node !=nullptr){
@@ -285,7 +296,18 @@ class priorityQueue{
 			std::cerr << "No such element in the lsit \n";
 			return nullptr;
 		}
-}
+
+		void display(std::ostream& out = std::cout) const
+		{
+			Node *node =front;
+			out<<"\nItem \tPriority \n";
+			while(node != nullptr)
+			{
+				out <<node->info << "\t" <<node->priority << "\n";
+				node =node->next;
+			}
+		}
+};
 
 int main()
 {
