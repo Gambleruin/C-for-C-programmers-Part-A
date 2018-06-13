@@ -94,7 +94,7 @@ bool is_connected(bool *graph[], int size)
 */
 
 
-/*
+
 typedef int vertex_t;
 typedef double weight_t;
  
@@ -210,10 +210,28 @@ int main()
  
     return 0;
 }
-*/
 
-#include <iostream>
+//graph representation
+template <typename T>
+class Graph
+{
+	public:
 
+		Graph(bool directed =false): directed(directed){}
+		int AddVertex(const T& item);
+		const &GetVertexData(int vertex_id) const;
+
+		//??
+		template <typename U>
+		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
+
+	private:
+		//??
+		int num_
+
+}
+
+// priority queue implementation
 template<typename T>
 class priorityQueue{
 	struct Node
@@ -255,6 +273,7 @@ class priorityQueue{
 			}
 		}
 
+/*
 		void deleteItem(const T& item){
 			Node *find =search(item);
 			Node *node =front;
@@ -271,15 +290,15 @@ class priorityQueue{
 				}
 			}
 		}
+*/
 
 		const T extractMin(){
-			
+			if(front)
+				return front;
 		}
 
-
-
 		friend std::ostream & operator <<(std::ostream &os, const priorityQueue<T> &pq){
-			pq.display(os);
+			pq.display_min(os);
 			return os;
 		}
 
@@ -307,21 +326,22 @@ class priorityQueue{
 				node =node->next;
 			}
 		}
+
+		void display_min(std::ostream& out = std::cout) const
+		{
+			out <<front->info << "\t" <<front->priority << "\n";
+		}
 };
 
 int main()
 {
 	priorityQueue<std::string> pq1;
-  	pq1.insert("code", 1);
-  	pq1.insert("sleep", 3);
+  	pq1.insert("code", 82);
+  	pq1.insert("sleep", 17);
   	pq1.insert("food", 2);
   	pq1.insert("date", 4);
   	std::cout << pq1;
 }
-
-
-
-
 
 
 
