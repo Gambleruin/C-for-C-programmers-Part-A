@@ -76,8 +76,7 @@ for the reference where dijkstra can be proved to be true:
 http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture11.pdf
 */
 
-#include <iostream>   //drops .h still available
-#include <string>
+#include <iostream>   
 #include <sstream>
 #include <cstdio>  
 #include <cstdlib> 
@@ -87,7 +86,6 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <list>
  
 #include <limits> // for numeric_limits
- 
 #include <set>
 #include <utility> // for pair
 #include <algorithm>
@@ -95,6 +93,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <queue>
 
 const weight_t max_weight = std::numeric_limits<double>::infinity();
+
 // priority queue implementation
 template<typename T>
 class priorityQueue{
@@ -119,7 +118,7 @@ class priorityQueue{
 			front =nullptr;
 		}
 
-		void insert(const T& item, int priority){
+		void insert( int priority, const T& item){
 			Node* tmp;
 			Node* node =new Node(item);
 			node->priority =priority;
@@ -137,8 +136,11 @@ class priorityQueue{
 			}
 		}
 
-		void pop_at_front(){}
-
+		void pop_at_front(){
+			if(front->next)
+				front =front->next;
+			return front;
+		}
 /*
 		void deleteItem(const T& item){
 			Node *find =search(item);
@@ -162,7 +164,6 @@ class priorityQueue{
 				return front;
 			return nullptr;
 		}
-
 
 		friend std::ostream & operator <<(std::ostream &os, const priorityQueue<T> &pq){
 			pq.display_min(os);
@@ -210,8 +211,9 @@ class Dijkstra
 	std::vector<std::vector<T>> adjacency_vector;
 	struct neighbor
 	{
-		T weight;
-		U target;
+		T vertex;
+		U weight;
+
 		neighbor(vertex_t arg_target, weight_t arg_weight)
         : target(arg_target), weight(arg_weight) {}
 	};
@@ -226,9 +228,10 @@ class Dijkstra
 		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
 		*/
 		Dijkstra(): adjacency_vector(){}
-		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
+		friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
 		
-		void addEdge(std::vector<std::pair<T, U>> const& edge_list){
+		// this is the initialized step
+		void init_adj_Rep(std::vector<std::pair<T, U>> const& edge_list){
 			for(auto const &edge :edge_list){
 				adjacency_vector[edge.first].push_back(edge.second);
 			}
@@ -236,10 +239,10 @@ class Dijkstra
 
 		void DijkstraComputePaths(int source,
                           const adjacency_vector &adjacency_v,
-                          std::vector<T> &min_distance,
-                          std::vector<U> &previous)
+                          std::vector<U> &min_distance,
+                          std::vector<T> &previous)
 		{
-			int n = adjacency_list.size();
+			int n = adjacency_v.size();
     		min_distance.clear();
     		min_distance.resize(n, max_weight);
     		min_distance[source] = 0;
@@ -251,24 +254,24 @@ class Dijkstra
 			while (!adjacency_v.empty()) {
 				int dist = adjacency_v.extractMin().first;
         		int u = adjacency_v.extractMin().second;
-        		vertex_queue.pop_at_front();
+        		pq.pop_at_front();
 
         		if (dist > min_distance[u])
 	    			continue;
 	    		// Visit each edge exiting u
-				const std::vector<neighbor> &neighbors = adjacency_list[u];
+				const std::vector<neighbor> &neighbors = adjacency_v[u];
 				for (std::vector<neighbor>::const_iterator neighbor_iter = neighbors.begin();
              			neighbor_iter != neighbors.end();
              			neighbor_iter++){
 					
-					vertex_t v = neighbor_iter->target;
+					T v = neighbor_iter->vertex;
             		weight_t weight = neighbor_iter->weight;
             		weight_t distance_through_u = dist + weight;
 
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
 	        			previous[v] = u;
-	        			vertex_queue.push(std::make_pair(min_distance[v], v));
+	        			pq.insert(std::make_pair(min_distance[v], v));
 	        		}
 
 				}
@@ -295,12 +298,7 @@ class Dijkstra
 
 int main()
 {
-	priorityQueue<std::string> pq1;
-  	pq1.insert("code", 82);
-  	pq1.insert("sleep", 17);
-  	pq1.insert("food", 2);
-  	pq1.insert("date", 4);
-  	std::cout << pq1;
+	//??
 }
 
 
