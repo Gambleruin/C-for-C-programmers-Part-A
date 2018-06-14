@@ -56,7 +56,7 @@ class graph
 		void Print(std::ostream &out) const;
 
 }
-
+*/
 
 class edge
 {
@@ -73,13 +73,13 @@ class edge
 		return s <<e.destination_vertex;
 	}
 };
-*/
+
 
 class vertex
 {
 	friend class graph;
 	int id;
-	std::list<edge> list; //???
+	std::list<edge> list; 
 
 	public:
 		vertex(int id)
@@ -138,14 +138,10 @@ template<typename T>
 class priorityQueue{
 	struct Node
 	{
-		/*
-		the content has to be changed into:
-			std::make_pair(min_distance[source], source)
-		*/
 		int priority;
 		T info;
 		Node* next;
-		Node(T item) : info(item), next(nullptr){}
+		Node(T item): info(item), next(nullptr){}
 	};
 	Node* front;
 
@@ -244,14 +240,14 @@ class priorityQueue{
 };
 
 //dijkstra representation
-template <typename T, U>
+template <typename T>
 class Dijkstra
 {
-	std::vector<std::vector<T>> adjacency_vector;
+	//std::vector<std::vector<T>> adjacency_vector;
 	struct neighbor
 	{
-		T vertex;
-		U weight;
+		//vertex and weight are all integernonononono!
+		T (vertex, weight);
 
 		neighbor(int arg_target, int arg_weight)
         : vertex(arg_target), weight(arg_weight) {}
@@ -261,15 +257,16 @@ class Dijkstra
 
 		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
 		std::vector<T> DijkstraComputePaths(int source,                 
-                          std::vector<std::vector<T>> const& adj_list
-                          std::vector<U> &min_distance,
+                          std::vector<std::vector<T>> const& adjacency_v
+                          std::vector<T> &min_distance,
                           std::vector<T> &previous)
 		{
+			/*
 			for(auto const &item :adj_list){
 				adjacency_vector[item.first].push_back(item.second);
 			}
-
-			adjacency_vector const&adjacency_v; 
+			*/
+			//adjacency_vector const&adjacency_v; 
 			int n = adjacency_v.size();
     		min_distance.clear();
     		min_distance.resize(n, max_weight);
@@ -292,7 +289,6 @@ class Dijkstra
 				int u =pq.extractMin().second;
 				pq.pop_at_front();
 
-
         		if (dist > min_distance[u])
 	    			continue;
 	    		// Visit each edge exiting u
@@ -308,7 +304,7 @@ class Dijkstra
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
 	        			previous[v] = u;
-	        			pq.insert(std::make_pair(min_distance[v], v));
+	        			pq.insert(std::make_pair(min_distance[v],(min_distance[v], v)));
 	        		}
 				}
 			}
@@ -322,6 +318,7 @@ class Dijkstra
     		for ( ; vertex != -1; vertex = previous[vertex])
         		path.push_front(vertex);
 
+        	//??? 
     		return path;
 		}
 /*
@@ -331,6 +328,7 @@ class Dijkstra
 
 }
 
+/*
 bool is_connected(bool *graph[], int size)
 {
 	int old_size =0, c_size =0;
@@ -355,10 +353,11 @@ bool is_connected(bool *graph[], int size)
 	//else if(old_size ==c_size) return false;
 	return false;
 }
+*/
 
 int main()
 {
-
+/*
 	bool **graph;
 	srand(); //seed rand()
 	graph =new bool*[size];
@@ -375,28 +374,11 @@ int main()
 	Dijkstra d;
 	source, destin;
 	std::list<int> previous;
-	previous =d.init_adj_Rep(source, graph);
+	previous =d.DijkstraComputePaths(source, graph);
 	std::list<int> =path;
 
 	path =d.DijkstraGetShortestPathTo(destin, previous);
-	//whatever u do with path
 
-/*
-algorithm details:
-	it starts with node0 and determines which nodes can be reached from this node
-	placing them in an open set and placing node 0 as the first node of a connected
-	component.
-	each iteration adds one node to the closed set.
-	this stops with either no further nodes reachable and is_connected is false or all nodes
-	being included in the closed set.
-	The algorthm was published as a SLAC report and later a generalization was published by hop
-	croft and Tarjan in 1973
-
-	open set will only include nodes that are NOT in the closed set!
-*/
-
-
-	//print() chaining, might put it in main? 
 	void list:: print(){
 		list_element* h =head;
 		while(h !=0){
@@ -405,6 +387,15 @@ algorithm details:
 		}
 		cout <<"###" <<endl;
 	}
+*/
+	graph g;
+    std::vector<int>    v;
+    g.add_node(v);
+
+    v.push_back(0);
+    g.add_node(v);
+
+    std::cout << g << "\n";
 	
 }
 
