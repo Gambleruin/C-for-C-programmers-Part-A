@@ -23,22 +23,41 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 
 const max_weight = std::numeric_limits<double>::infinity();
 
-// graph representation
+/*
 template <typename T>
 class graph
 {
-	
+	std::vector<Vertex> vertices;
+	std::vector<Vertex> vertices;
+	struct Vertex
+	{
+		int id;
+		int cost;
+		const bool directed;
+	};
+
+	public:
+		graph(bool directed =false): directed(directed){}
+
+		int AddVertex(int id, T val){
+			vertices.push_back(Vertex(id, val));
+			return id;
+		}
+
+		void AddEdge(int start_id, int end_id, int cost =0);
+		const T &GetVertexData(int vertex_id) const;
+
+
+
+		template <typename U>
+		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
+
+	private:
+		void Print(std::ostream &out) const;
+
 }
-
-/*
-	void addVertex(vertex a){
-		vertices[a.name] =a;
-	}
-
-	void addEdge(int a, int b){
-		vertex f,s;
-	}
 */
+
 
 
 // priority queue implementation
