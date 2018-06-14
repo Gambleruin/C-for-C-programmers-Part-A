@@ -1,75 +1,3 @@
-
-/*
-//base graph constructor
-bool **graph;
-	srand(); //seed rand()
-	graph =new bool*[size];
-	for (int i =0; i<size; i++)
-		graph[i] =new bool[size];
-
-//heap created 2d array of Bool, init of the graph
-//next, Density is 0.19
-for(int i =0; i<size; ++i)
-	for(int j =i; j<size; ++j)
-		if(i ==j) graph[i][j] =false; //np loops
-			else graph[i][j] =graph[j][i] =(prob()<0.19);
-
-//density is the probability that an edge exists
-
-
-algorithm details:
-	it starts with node0 and determines which nodes can be reached from this node
-	placing them in an open set and placing node 0 as the first node of a connected
-	component.
-	each iteration adds one node to the closed set.
-	this stops with either no further nodes reachable and is_connected is false or all nodes
-	being included in the closed set.
-	The algorthm was published as a SLAC report and later a generalization was published by hop
-	croft and Tarjan in 1973
-
-	open set will only include nodes that are NOT in the closed set!
-
-
-//implement ls_connected
-bool is_connected(bool *graph[], int size)
-{
-	int old_size =0, c_size =0;
-	bool* close =new bool[size];
-	bool* open =new bool[size];
-	for(int i =0; i<size; ++i)
-		open[i] =close[i] =false;
-	open[0] =true;
-
-	//add to close, c_size =closed set sign
-
-	for(int i =0; i<size; ++i){
-		old_size =c_size;
-		if(open[i]){
-			close[i] =true; c_size++;			
-		}
-		for(int j =0; j<size; ++j)
-			open[j] =open[j]||graph[i][j];
-	}
-		
-	//where to place??
-	if(c_size ==size) 
-		return true;
-	//else if(old_size ==c_size) return false;
-	return false;
-
-	//print() chaining, might put it in main? 
-	void list:: print(){
-		list_element* h =head;
-		while(h !=0){
-			cout <<h->d << ", ";
-			h =h->next;
-		}
-		cout <<"###" <<endl;
-	}
-	
-}
-*/
-
 /* 
 dijkstra_stl_template practise in c++
 for the reference where dijkstra can be proved to be true:
@@ -92,7 +20,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <iterator>
 #include <queue>
 
-const weight_t max_weight = std::numeric_limits<double>::infinity();
+const max_weight = std::numeric_limits<double>::infinity();
 
 // priority queue implementation
 template<typename T>
@@ -139,7 +67,6 @@ class priorityQueue{
 		void pop_at_front(){
 			if(front->next)
 				front =front->next;
-			return front;
 		}
 /*
 		void deleteItem(const T& item){
@@ -202,46 +129,32 @@ class priorityQueue{
 };
 
 //dijkstra representation
-using int vertex_t;
-using double weight_t;
-
 template <typename T, U>
 class Dijkstra
 {
-	std::vector<std::vector<T>> adjacency_vector;
+	std::vector<std::vector<T, U>> adjacency_vector;
 	struct neighbor
 	{
 		T vertex;
 		U weight;
 
-		neighbor(vertex_t arg_target, weight_t arg_weight)
-        : target(arg_target), weight(arg_weight) {}
+		neighbor(int arg_target, int arg_weight)
+        : vertex(arg_target), weight(arg_weight) {}
 	};
 	public:
-		/*
-		Graph(bool directed =false): directed(directed){}
-		int AddVertex(const T& item);
-		const &GetVertexData(int vertex_id) const;
-
-		
-		template <typename U>
-		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
-		*/
 		Dijkstra(): adjacency_vector(){}
-		friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
-		
-		// this is the initialized step
-		void init_adj_Rep(std::vector<std::pair<T, U>> const& edge_list){
-			for(auto const &edge :edge_list){
-				adjacency_vector[edge.first].push_back(edge.second);
-			}
-		}
 
-		void DijkstraComputePaths(int source,
-                          const adjacency_vector &adjacency_v,
+		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
+		std::vector<T> DijkstraComputePaths(int source,                 
+                          std::vector<std::pair<T, U>> const& adj_list
                           std::vector<U> &min_distance,
                           std::vector<T> &previous)
 		{
+			for(auto const &item :adj_list){
+				adjacency_vector[item.first].push_back(item.second);
+			}
+
+			adjacency_vector const&adjacency_v; 
 			int n = adjacency_v.size();
     		min_distance.clear();
     		min_distance.resize(n, max_weight);
@@ -252,8 +165,8 @@ class Dijkstra
 			pq.insert(std::make_pair(min_distance[source], source));
 
 			while (!adjacency_v.empty()) {
-				int dist = adjacency_v.extractMin().first;
-        		int u = adjacency_v.extractMin().second;
+				int dist = adjacency_v[source].first;
+        		int u = adjacency_v[source].second;
         		pq.pop_at_front();
 
         		if (dist > min_distance[u])
@@ -265,41 +178,113 @@ class Dijkstra
              			neighbor_iter++){
 					
 					T v = neighbor_iter->vertex;
-            		weight_t weight = neighbor_iter->weight;
-            		weight_t distance_through_u = dist + weight;
+            		int weight = neighbor_iter->weight;
+            		int distance_through_u = dist + weight;
 
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
 	        			previous[v] = u;
 	        			pq.insert(std::make_pair(min_distance[v], v));
 	        		}
-
 				}
-
 			}
+			return previous;
 		}
 
-		std::list<vertex_t> DijkstraGetShortestPathTo(
-    		vertex_t vertex, const std::vector<vertex_t> &previous)
+		std::list<T> DijkstraGetShortestPathTo(
+    		T vertex, const std::vector<T> &previous)
 		{
-    		std::list<vertex_t> path;
+    		std::list<T> path;
     		for ( ; vertex != -1; vertex = previous[vertex])
         		path.push_front(vertex);
 
     		return path;
 		}
-
+/*
 	private:
 		void print(std::ostream &out) const;
+		*/
 
 }
 
+bool is_connected(bool *graph[], int size)
+{
+	int old_size =0, c_size =0;
+	bool* close =new bool[size];
+	bool* open =new bool[size];
+	for(int i =0; i<size; ++i)
+		open[i] =close[i] =false;
+	open[0] =true;
 
+	//add to close, c_size =closed set sign
+	for(int i =0; i<size; ++i){
+		old_size =c_size;
+		if(open[i]){
+			close[i] =true; c_size++;			
+		}
+	for(int j =0; j<size; ++j)
+		open[j] =open[j]||graph[i][j];
+
+	//where to place??
+	if(c_size ==size) 
+		return true;
+	//else if(old_size ==c_size) return false;
+	return false;
+}
 
 int main()
 {
-	//??
+
+	bool **graph;
+	srand(); //seed rand()
+	graph =new bool*[size];
+	for (int i =0; i<size; i++)
+		graph[i] =new bool[size];
+
+	//heap created 2d array of Bool, init of the graph
+	//next, Density is 0.19
+	for(int i =0; i<size; ++i)
+		for(int j =i; j<size; ++j)
+			if(i ==j) graph[i][j] =false; //np loops
+				else graph[i][j] =graph[j][i] =(prob()<0.19);
+
+	Dijkstra d;
+	source, destin;
+	std::list<int> previous;
+	previous =d.init_adj_Rep(source, graph);
+	std::list<int> =path;
+
+	path =d.DijkstraGetShortestPathTo(destin, previous);
+	//whatever u do with path
+
+
+/*
+algorithm details:
+	it starts with node0 and determines which nodes can be reached from this node
+	placing them in an open set and placing node 0 as the first node of a connected
+	component.
+	each iteration adds one node to the closed set.
+	this stops with either no further nodes reachable and is_connected is false or all nodes
+	being included in the closed set.
+	The algorthm was published as a SLAC report and later a generalization was published by hop
+	croft and Tarjan in 1973
+
+	open set will only include nodes that are NOT in the closed set!
+*/
+
+
+	//print() chaining, might put it in main? 
+	void list:: print(){
+		list_element* h =head;
+		while(h !=0){
+			cout <<h->d << ", ";
+			h =h->next;
+		}
+		cout <<"###" <<endl;
+	}
+	
 }
+
 
 
 
