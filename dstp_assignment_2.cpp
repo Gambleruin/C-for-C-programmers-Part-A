@@ -12,6 +12,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 
 #include <vector> 
 #include <list>
+#include <unordered_map>
  
 #include <limits> // for numeric_limits
 #include <set>
@@ -22,11 +23,33 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 
 const max_weight = std::numeric_limits<double>::infinity();
 
+// graph representation
+template <typename T>
+class graph
+{
+	
+}
+
+/*
+	void addVertex(vertex a){
+		vertices[a.name] =a;
+	}
+
+	void addEdge(int a, int b){
+		vertex f,s;
+	}
+*/
+
+
 // priority queue implementation
 template<typename T>
 class priorityQueue{
 	struct Node
 	{
+		/*
+		the content has to be changed into:
+			std::make_pair(min_distance[source], source)
+		*/
 		int priority;
 		T info;
 		Node* next;
@@ -132,7 +155,7 @@ class priorityQueue{
 template <typename T, U>
 class Dijkstra
 {
-	std::vector<std::vector<T, U>> adjacency_vector;
+	std::vector<std::vector<T>> adjacency_vector;
 	struct neighbor
 	{
 		T vertex;
@@ -146,7 +169,7 @@ class Dijkstra
 
 		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
 		std::vector<T> DijkstraComputePaths(int source,                 
-                          std::vector<std::pair<T, U>> const& adj_list
+                          std::vector<std::vector<T>> const& adj_list
                           std::vector<U> &min_distance,
                           std::vector<T> &previous)
 		{
@@ -164,7 +187,7 @@ class Dijkstra
 			priorityQueue<std::string> pq;
 			pq.insert(std::make_pair(min_distance[source], source));
 
-			while (!adjacency_v.empty()) {
+			while (!pq.empty()) {
 				/*
 				if pq.first! =nullptr && pq.first! =source:
 					then do:
@@ -173,6 +196,10 @@ class Dijkstra
 				u =source;
 				// the corresponding weight is abitrary in the beginning, which will be initialized. 
 				*/
+				int dist =pq.extractMin().first;
+				int u =pq.extractMin().second;
+				pq.pop_at_front();
+
 
         		if (dist > min_distance[u])
 	    			continue;
