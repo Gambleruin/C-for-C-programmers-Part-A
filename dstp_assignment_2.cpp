@@ -165,9 +165,14 @@ class Dijkstra
 			pq.insert(std::make_pair(min_distance[source], source));
 
 			while (!adjacency_v.empty()) {
-				int dist = adjacency_v[source].first;
-        		int u = adjacency_v[source].second;
-        		pq.pop_at_front();
+				/*
+				if pq.first! =nullptr && pq.first! =source:
+					then do:
+						u =pq.pop_at_front();
+
+				u =source;
+				// the corresponding weight is abitrary in the beginning, which will be initialized. 
+				*/
 
         		if (dist > min_distance[u])
 	    			continue;
@@ -256,7 +261,6 @@ int main()
 
 	path =d.DijkstraGetShortestPathTo(destin, previous);
 	//whatever u do with path
-
 
 /*
 algorithm details:
