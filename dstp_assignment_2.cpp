@@ -56,9 +56,82 @@ class graph
 		void Print(std::ostream &out) const;
 
 }
+
+
+class edge
+{
+	int destination_vertex;
+	public:
+		int getDest() const {return destination_vertex;}
+
+		edge(int ver)
+			: destination_vertex(ver)
+		{}
+
+	friend std::ostream& operator<<(std::ostream& s, edge const& e)
+	{
+		return s <<e.destination_vertex;
+	}
+};
 */
 
+class vertex
+{
+	friend class graph;
+	int id;
+	std::list<edge> list; //???
 
+	public:
+		vertex(int id)
+			: id(id)
+		{}
+
+	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
+	{
+		s << v.id << "->";
+		std::copy(v.list.begin(), v.list.end(),
+			std::ostream_iterator<>(s, ","));
+		return s;
+	}
+
+};
+
+class graph
+{
+	private:
+		std::vector<vertex> vertices;
+		int 				next;
+
+	public:
+		graph()
+			: next(0)
+		{}
+		/*
+			add a new node 'n'
+			the vector of edges defines what node(s) 'n' connects to,
+			add an edge from 'n' to each node in 'edges'
+			add an edge from each node in 'edges' to 'n'
+			it is assumed that 'edges' does not contain any nodes
+		*/
+		void add_node(std::vector<int> const &edges)
+		{
+			vertices.push_back(vertex(next));
+
+			for(unsigned int i =0; i<edges.size(); ++i)
+			{
+				vertices[edges[i]].list.push_back(next);
+				vertices[next].list.push_back(edge[i]);
+			}
+			++next;
+		}
+
+		friend std::ostream &operator<<(std::ostream& s, graph const& g)
+		{
+			std::copy(g.vertices.begin(), g.vertices.end(),
+				std::ostream_iterator<vertex>(s, "\n"));
+			return s;
+		}
+};
 
 // priority queue implementation
 template<typename T>
