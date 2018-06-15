@@ -61,8 +61,14 @@ class graph
 class edge
 {
 	int destination_vertex;
+	int weight;
 	public:
-		int getDest() const {return destination_vertex;}
+
+		int getDest() const {
+			return destination_vertex;
+		}
+
+		int get
 
 		edge(int ver)
 			: destination_vertex(ver)
@@ -74,7 +80,7 @@ class edge
 	}
 };
 
-
+class graph;
 class vertex
 {
 	friend class graph;
@@ -243,11 +249,12 @@ class priorityQueue{
 template <typename T>
 class Dijkstra
 {
-	//std::vector<std::vector<T>> adjacency_vector;
+	std::vector<std::vector<T>> adjacency_vector;
+	// the neighbor struct will not be needed as edge class is suffice
 	struct neighbor
 	{
-		//vertex and weight are all integernonononono!
-		T (vertex, weight);
+		T edge;
+		U weight;
 
 		neighbor(int arg_target, int arg_weight)
         : vertex(arg_target), weight(arg_weight) {}
@@ -257,15 +264,15 @@ class Dijkstra
 
 		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
 		std::vector<T> DijkstraComputePaths(int source,                 
-                          std::vector<std::vector<T>> const& adjacency_v
+                          std::vector<std::vector<T>> const& adj_list
                           std::vector<T> &min_distance,
                           std::vector<T> &previous)
 		{
-			/*
+			
 			for(auto const &item :adj_list){
 				adjacency_vector[item.first].push_back(item.second);
 			}
-			*/
+			
 			//adjacency_vector const&adjacency_v; 
 			int n = adjacency_v.size();
     		min_distance.clear();
@@ -304,7 +311,7 @@ class Dijkstra
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
 	        			previous[v] = u;
-	        			pq.insert(std::make_pair(min_distance[v],(min_distance[v], v)));
+	        			pq.insert(std::make_pair(min_distance[v], v));
 	        		}
 				}
 			}
