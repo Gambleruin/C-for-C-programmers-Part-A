@@ -21,7 +21,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <iterator>
 #include <queue>
 
-const max_weight = std::numeric_limits<double>::infinity();
+const max_cost = std::numeric_limits<double>::infinity();
 
 /*
 template <typename T>
@@ -57,88 +57,6 @@ class graph
 
 }
 */
-
-class edge
-{
-	int destination_vertex;
-	int weight;
-	public:
-
-		int getDest() const {
-			return destination_vertex;
-		}
-
-		int get
-
-		edge(int ver)
-			: destination_vertex(ver)
-		{}
-
-	friend std::ostream& operator<<(std::ostream& s, edge const& e)
-	{
-		return s <<e.destination_vertex;
-	}
-};
-
-class graph;
-class vertex
-{
-	friend class graph;
-	int id;
-	std::list<edge> list; 
-
-	public:
-		vertex(int id)
-			: id(id)
-		{}
-
-	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
-	{
-		s << v.id << "->";
-		std::copy(v.list.begin(), v.list.end(),
-			std::ostream_iterator<>(s, ","));
-		return s;
-	}
-
-};
-
-class graph
-{
-	private:
-		std::vector<vertex> vertices;
-		int 				next;
-
-	public:
-		graph()
-			: next(0)
-		{}
-		/*
-			add a new node 'n'
-			the vector of edges defines what node(s) 'n' connects to,
-			add an edge from 'n' to each node in 'edges'
-			add an edge from each node in 'edges' to 'n'
-			it is assumed that 'edges' does not contain any nodes
-		*/
-		void add_node(std::vector<int> const &edges)
-		{
-			vertices.push_back(vertex(next));
-
-			for(unsigned int i =0; i<edges.size(); ++i)
-			{
-				vertices[edges[i]].list.push_back(next);
-				vertices[next].list.push_back(edge[i]);
-			}
-			++next;
-		}
-
-		friend std::ostream &operator<<(std::ostream& s, graph const& g)
-		{
-			std::copy(g.vertices.begin(), g.vertices.end(),
-				std::ostream_iterator<vertex>(s, "\n"));
-			return s;
-		}
-};
-
 // priority queue implementation
 template<typename T>
 class priorityQueue{
@@ -245,12 +163,96 @@ class priorityQueue{
 		}
 };
 
-//dijkstra representation
+class edge
+{
+	int destination_vertex;
+	int Cost;
+	public:
+
+		int getDest() const {
+			return destination_vertex;
+		}
+
+		int getCost() const{
+			return Cost;
+		}
+
+		edge(int ver, int co)
+			: destination_vertex(ver), Cost(co)
+		{}
+
+	friend std::ostream& operator<<(std::ostream& s, edge const& e)
+	{
+		return s <<e.destination_vertex;
+	}
+};
+
+class graph;
+class vertex
+{
+	friend class graph;
+	int id;
+	std::list<edge> list; 
+
+	public:
+		vertex(int id)
+			: id(id)
+		{}
+
+	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
+	{
+		s << v.id << "->";
+		std::copy(v.list.begin(), v.list.end(),
+			std::ostream_iterator<>(s, ","));
+		return s;
+	}
+
+};
+
+class graph
+{
+	private:
+		std::vector<vertex> vertices;
+		int 				next;
+
+	public:
+		graph()
+			: next(0)
+		{}
+		/*
+			add a new node 'n'
+			the vector of edges defines what node(s) 'n' connects to,
+			add an edge from 'n' to each node in 'edges'
+			add an edge from each node in 'edges' to 'n'
+			it is assumed that 'edges' does not contain any nodes
+		*/
+		void add_node(std::vector<int> const &edges)
+		{
+			vertices.push_back(vertex(next));
+
+			for(unsigned int i =0; i<edges.size(); ++i)
+			{
+				vertices[edges[i]].list.push_back(next);
+				vertices[next].list.push_back(edge[i]);
+			}
+			++next;
+		}
+
+		friend std::ostream &operator<<(std::ostream& s, graph const& g)
+		{
+			std::copy(g.vertices.begin(), g.vertices.end(),
+				std::ostream_iterator<vertex>(s, "\n"));
+			return s;
+		}
+};
+
+//dijkstra representation, the type here is edge
 template <typename T>
 class Dijkstra
 {
-	std::vector<std::vector<T>> adjacency_vector;
+	//std::vector<std::vector<T>> adjacency_vector;
 	// the neighbor struct will not be needed as edge class is suffice
+	/*
 	struct neighbor
 	{
 		T edge;
@@ -259,29 +261,31 @@ class Dijkstra
 		neighbor(int arg_target, int arg_weight)
         : vertex(arg_target), weight(arg_weight) {}
 	};
+	*/
 	public:
-		Dijkstra(): adjacency_vector(){}
+		//Dijkstra(): adjacency_vector(){}    ????
 
 		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
 		std::vector<T> DijkstraComputePaths(int source,                 
-                          std::vector<std::vector<T>> const& adj_list
-                          std::vector<T> &min_distance,
-                          std::vector<T> &previous)
+                          std::vector<std::vector<T>> const& adjvM
+                          std::vector<int> &min_distance,
+                          std::vector<int> &previous)
 		{
-			
+			/*
 			for(auto const &item :adj_list){
 				adjacency_vector[item.first].push_back(item.second);
 			}
+			*/
 			
 			//adjacency_vector const&adjacency_v; 
-			int n = adjacency_v.size();
+			int n = adjvM.size();
     		min_distance.clear();
-    		min_distance.resize(n, max_weight);
+    		min_distance.resize(n, max_cost);
     		min_distance[source] = 0;
     		previous.clear();
     		previous.resize(n, -1);
-			priorityQueue<std::string> pq;
-			pq.insert(std::make_pair(min_distance[source], source));
+			priorityQueue<std::edge> pq;
+			pq.insert(min_distance[source], std::make_pair(min_distance[source], source));
 
 			while (!pq.empty()) {
 				/*
@@ -292,36 +296,36 @@ class Dijkstra
 				u =source;
 				// the corresponding weight is abitrary in the beginning, which will be initialized. 
 				*/
-				int dist =pq.extractMin().first;
-				int u =pq.extractMin().second;
+				int u =pq.extractMin().first;
+				int dist =pq.extractMin().second;
 				pq.pop_at_front();
 
         		if (dist > min_distance[u])
 	    			continue;
 	    		// Visit each edge exiting u
-				const std::vector<neighbor> &neighbors = adjacency_v[u];
-				for (std::vector<neighbor>::const_iterator neighbor_iter = neighbors.begin();
+				const std::vector<std::edge> &neighbors = adjvM[u];
+				for (std::vector<std::edge>::const_iterator neighbor_iter = neighbors.begin();
              			neighbor_iter != neighbors.end();
              			neighbor_iter++){
 					
-					T v = neighbor_iter->vertex;
-            		int weight = neighbor_iter->weight;
+					int v = neighbor_iter->destination_vertex;
+            		int cost = neighbor_iter->cost;
             		int distance_through_u = dist + weight;
 
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
 	        			previous[v] = u;
-	        			pq.insert(std::make_pair(min_distance[v], v));
+	        			pq.insert(min_distance[v], std::make_pair(min_distance[v], v));
 	        		}
 				}
 			}
 			return previous;
 		}
 
-		std::list<T> DijkstraGetShortestPathTo(
-    		T vertex, const std::vector<T> &previous)
+		std::list<int> DijkstraGetShortestPathTo(
+    		int vertex, const std::vector<int> &previous)
 		{
-    		std::list<T> path;
+    		std::list<int> path;
     		for ( ; vertex != -1; vertex = previous[vertex])
         		path.push_front(vertex);
 
