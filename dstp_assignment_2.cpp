@@ -21,43 +21,8 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <iterator>
 #include <queue>
 
-const max_cost = std::numeric_limits<double>::infinity();
+const double max_cost = std::numeric_limits<double>::infinity();
 
-/*
-template <typename T>
-class graph
-{
-	std::vector<Vertex> vertices;
-	std::vector<Vertex> vertices;
-	struct Vertex
-	{
-		int id;
-		int cost;
-		const bool directed;
-	};
-
-	public:
-		graph(bool directed =false): directed(directed){}
-
-		int AddVertex(int id, T val){
-			vertices.push_back(Vertex(id, val));
-			return id;
-		}
-
-		void AddEdge(int start_id, int end_id, int cost =0);
-		const T &GetVertexData(int vertex_id) const;
-
-
-
-		template <typename U>
-		friend std::ostream &operator<<(std::ostream &out, Graph<U> &g);
-
-	private:
-		void Print(std::ostream &out) const;
-
-}
-*/
-// priority queue implementation
 template<typename T>
 class priorityQueue{
 	struct Node
@@ -103,24 +68,7 @@ class priorityQueue{
 			if(front->next)
 				front =front->next;
 		}
-/*
-		void deleteItem(const T& item){
-			Node *find =search(item);
-			Node *node =front;
-			if(node ==find)
-				front =node->next;
-			else{
-				while(find != nullptr){
-					if(node->next ==find){
-						node->next =find->next;
-						delete find;
-						return;
-					}
-					node =node->next;
-				}
-			}
-		}
-*/
+
 		const T extractMin(){
 			if(front)
 				return front;
@@ -177,8 +125,9 @@ class edge
 			return Cost;
 		}
 
-		edge(int ver, int co)
-			: destination_vertex(ver), Cost(co)
+
+		edge(int ver, int cost)
+			: destination_vertex(ver), Cost(cost)
 		{}
 
 	friend std::ostream& operator<<(std::ostream& s, edge const& e)
@@ -189,79 +138,70 @@ class edge
 
 class graph;
 class vertex
-{
-	friend class graph;
-	int id;
-	std::list<edge> list; 
+{   
+    friend class graph;
+    int id; 
+    std::list<edge>  list;
 
-	public:
-		vertex(int id)
-			: id(id)
-		{}
+    public:
+        vertex(int id) 
+            : id(id)
+        {}  
 
-	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
-	{
-		s << v.id << "->";
-		std::copy(v.list.begin(), v.list.end(),
-			std::ostream_iterator<>(s, ","));
-		return s;
-	}
-
+    friend std::ostream& operator<<(std::ostream& s, vertex const& v)
+    {   
+          s << v.id << "->";
+          std::copy(v.list.begin(), v.list.end(),
+                    std::ostream_iterator<edge>(s, ","));
+          return s;
+    }   
 };
 
 class graph
-{
-	private:
-		std::vector<vertex> vertices;
-		int 				next;
+{   
+    private:
+        std::vector<vertex>   vertexes;
+        int                   next;
 
-	public:
-		graph()
-			: next(0)
-		{}
-		/*
-			add a new node 'n'
-			the vector of edges defines what node(s) 'n' connects to,
-			add an edge from 'n' to each node in 'edges'
-			add an edge from each node in 'edges' to 'n'
-			it is assumed that 'edges' does not contain any nodes
-		*/
-		void add_node(std::vector<int> const &edges)
-		{
-			vertices.push_back(vertex(next));
+    public:
+        graph()
+            : next(0)
+        {}  
 
-			for(unsigned int i =0; i<edges.size(); ++i)
-			{
-				vertices[edges[i]].list.push_back(next);
-				vertices[next].list.push_back(edge[i]);
-			}
-			++next;
-		}
+        //
+        // Add a new node node 'n'
+        // The vector of edges defines what node(s) 'n' connects too.
+        //      add an edge from 'n' to each node in `edges'
+        //      add an edge from each node in `edges' to 'n'
+        //
+        // Note It is assumed that `edges` does not contain any nodes
+        //      larger than (n-1)
+        void add_node( std::vector<edge> const  &edges)
+        {   
+            vertexes.push_back(vertex(next));
 
-		friend std::ostream &operator<<(std::ostream& s, graph const& g)
-		{
-			std::copy(g.vertices.begin(), g.vertices.end(),
-				std::ostream_iterator<vertex>(s, "\n"));
-			return s;
-		}
-};
+            for(unsigned int i=0;i<edges.size();++i)
+            {   
 
-//dijkstra representation, the type here is edge
+               vertexes[next].list.push_back(edges[i]);
+            }   
+            ++next;
+        }   
+
+        friend std::ostream& operator<<(std::ostream& s, graph const& g)
+        {   
+             std::copy(g.vertexes.begin(), g.vertexes.end(),
+                       std::ostream_iterator<vertex>(s, "\n"));
+             return s;
+        }   
+};  
+
+
+/*
 template <typename T>
 class Dijkstra
 {
-	//std::vector<std::vector<T>> adjacency_vector;
-	// the neighbor struct will not be needed as edge class is suffice
-	/*
-	struct neighbor
-	{
-		T edge;
-		U weight;
 
-		neighbor(int arg_target, int arg_weight)
-        : vertex(arg_target), weight(arg_weight) {}
-	};
-	*/
 	public:
 		//Dijkstra(): adjacency_vector(){}    ????
 
@@ -271,13 +211,8 @@ class Dijkstra
                           std::vector<int> &min_distance,
                           std::vector<int> &previous)
 		{
-			/*
-			for(auto const &item :adj_list){
-				adjacency_vector[item.first].push_back(item.second);
-			}
-			*/
+
 			
-			//adjacency_vector const&adjacency_v; 
 			int n = adjvM.size();
     		min_distance.clear();
     		min_distance.resize(n, max_cost);
@@ -288,14 +223,7 @@ class Dijkstra
 			pq.insert(min_distance[source], std::make_pair(min_distance[source], source));
 
 			while (!pq.empty()) {
-				/*
-				if pq.first! =nullptr && pq.first! =source:
-					then do:
-						u =pq.pop_at_front();
 
-				u =source;
-				// the corresponding weight is abitrary in the beginning, which will be initialized. 
-				*/
 				int u =pq.extractMin().first;
 				int dist =pq.extractMin().second;
 				pq.pop_at_front();
@@ -332,14 +260,12 @@ class Dijkstra
         	//??? 
     		return path;
 		}
-/*
-	private:
-		void print(std::ostream &out) const;
-		*/
+
 
 }
 
-/*
+
+
 bool is_connected(bool *graph[], int size)
 {
 	int old_size =0, c_size =0;
@@ -365,6 +291,7 @@ bool is_connected(bool *graph[], int size)
 	return false;
 }
 */
+
 
 int main()
 {
@@ -399,15 +326,8 @@ int main()
 		cout <<"###" <<endl;
 	}
 */
-	graph g;
-    std::vector<int>    v;
-    g.add_node(v);
 
-    v.push_back(0);
-    g.add_node(v);
-
-    std::cout << g << "\n";
-	
+	return 0;
 }
 
 
