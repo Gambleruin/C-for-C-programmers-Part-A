@@ -3,16 +3,11 @@ dijkstra_stl_template practise in c++
 for the reference where dijkstra can be proved to be true:
 http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture11.pdf
 */
-
 #include <iostream>   
 #include <sstream>
 #include <cstdio>  
 #include <cstdlib> 
 #include <vector>
-
-#include <vector> 
-#include <list>
-#include <unordered_map>
  
 #include <limits> // for numeric_limits
 #include <set>
@@ -22,6 +17,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <queue>
 
 //graph representation
+const int num_vertices =5;
 const double max_cost = std::numeric_limits<double>::infinity();
 std::vector<std::vector<edge>> const adjM;
 
@@ -56,52 +52,53 @@ class vertex
 {   
     friend class graph;
     int id; 
-    std::list<edge>  list;
+    std::vector<edge>  list;
 
     public:
         vertex(int id) 
             : id(id)
-        {}  
-    //maybe deep copy construction as well, more like an idetity function
-    bool this_vertex(vertex const& v){
-    	if(this.v =v)
-    		return true;
-    	return false;
-    }
+        {} 
 
-    vertex* init_v(){
-    	return this.vertex;
-    }
+    	//maybe deep copy construction as well, 
+        vertex(const vertex& copy)   
+        : i(copy.i), list(new std::vector<edge>(*copy.list))  
+    	{}
 
-    friend std::ostream& operator<<(std::ostream& s, vertex const& v)
-    {   
-          s << v.id << "->";
-          std::copy(v.list.begin(), v.list.end(),
-                    std::ostream_iterator<edge>(s, ","));
-          return s;
-    }   
+    	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
+    	{   
+        	s << v.id << "->";
+          	std::copy(v.list.begin(), v.list.end(),
+            std::ostream_iterator<edge>(s, ","));
+            return s;
+    	}   
 };
 
 class graph
 {   
     private:
-        std::vector<vertex>   vertexes;
-        int                   next;
+        std::vector<vertex> vertices;
 
     public:
-        graph()
-            : next(0)
+        graph(const graph& copy)   
+        : i(copy.i), vertices(new std::vector<vertex> (*copy.vertices))
+
+        graph(std::vector<vertex> vs)
+        : vs(vs)
         {}  
-        // need one more deep copy constructor, to which all properties
-        // will be initialized 
-        vertex* add_node( edge const &e, vertex const &v)
+
+        void add_node( edge const &e, int id)
         {   
- 			vertexes[v->id].list.push_back(edges[i]);
+ 			vertices[id].list.push_back(e);
         } 
 
-        std::vector<vertex> ret_vertices(){
-        	return this.vertices;
+/*
+        void identify_vertices(std::vector<vertex> vs){
+        	this->vs =vertices;
         }
+*/
+
+
+
 /*
         bool is_connected(bool *graph[], int size)
 		{
@@ -128,9 +125,10 @@ class graph
 			return false;
 		}
 */
+
         friend std::ostream& operator<<(std::ostream& s, graph const& g)
         {   
-             std::copy(g.vertexes.begin(), g.vertexes.end(),
+             std::copy(g.vertices.begin(), g.vertices.end(),
                        std::ostream_iterator<vertex>(s, "\n"));
              return s;
         }   
@@ -277,11 +275,11 @@ class Dijkstra
 		}
 
 		std::list<int> DijkstraGetShortestPathTo(
-    		int vertex, const std::vector<int> &previous)
+    		int v_id, const std::vector<int> &previous)
 		{
     		std::list<int> path;
-    		for (; vertex != -1; vertex = previous[vertex])
-        		path.push_front(vertex);
+    		for (; v_id != -1; v_id = previous[v_id])
+        		path.push_front(v_id);
 
     		return path;
 		}
@@ -289,16 +287,19 @@ class Dijkstra
 
 //use in main
 void init_graph(const std::vector<edge> &edges){
+	std::vector<vertex> vertices;
 	graph *g;
-	// first step, getting all the vertices in order:
+	// deep copy constructor, dynamic memory allocation
+	g->graph(vertices);
 	for (auto &it: edges){
-		// check if it is the same vertex
-		for(){
-        	if(this_vertex(v))
-				g->add_node(v, it)
+		
+		for(int i, i<num_vertices, i++){
+				// if the edge exists
+				if(it.is_connected(it))
+					g->add_node(i, it)
 		}
 	}
-    vertices =ret_vertices();
+
     for (auto &it: vertices){
     	adjM[it] =it.list;
     }    
@@ -338,6 +339,7 @@ int main()
 		cout <<"###" <<endl;
 	}
 */
+
 	init_graph();
 	Dijkstra::DijkstraComputePaths();
 	return 0;
