@@ -182,7 +182,6 @@ class graph
 
             for(unsigned int i=0;i<edges.size();++i)
             {   
-
                vertexes[next].list.push_back(edges[i]);
             }   
             ++next;
@@ -196,30 +195,24 @@ class graph
         }   
 };  
 
-
-/*
 template <typename T>
 class Dijkstra
 {
-
 	public:
-		//Dijkstra(): adjacency_vector(){}    ????
-
 		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
-		std::vector<T> DijkstraComputePaths(int source,                 
-                          std::vector<std::vector<T>> const& adjvM
+		std::vector<int> DijkstraComputePaths(int source,                 
+                          std::vector<std::vector<edge>> const& adjvM,
                           std::vector<int> &min_distance,
                           std::vector<int> &previous)
 		{
 
-			
 			int n = adjvM.size();
     		min_distance.clear();
     		min_distance.resize(n, max_cost);
     		min_distance[source] = 0;
     		previous.clear();
     		previous.resize(n, -1);
-			priorityQueue<std::edge> pq;
+    		priorityQueue<T> pq;
 			pq.insert(min_distance[source], std::make_pair(min_distance[source], source));
 
 			while (!pq.empty()) {
@@ -231,14 +224,14 @@ class Dijkstra
         		if (dist > min_distance[u])
 	    			continue;
 	    		// Visit each edge exiting u
-				const std::vector<std::edge> &neighbors = adjvM[u];
-				for (std::vector<std::edge>::const_iterator neighbor_iter = neighbors.begin();
+				const std::vector<edge> &neighbors = adjvM[u];
+				for (std::vector<edge>::const_iterator neighbor_iter = neighbors.begin();
              			neighbor_iter != neighbors.end();
              			neighbor_iter++){
 					
-					int v = neighbor_iter->destination_vertex;
-            		int cost = neighbor_iter->cost;
-            		int distance_through_u = dist + weight;
+					int v = neighbor_iter->getDest();
+            		int cost = neighbor_iter->getCost();
+            		int distance_through_u = dist + cost;
 
 	    			if (distance_through_u < min_distance[v]) {
 	        			min_distance[v] = distance_through_u;
@@ -262,10 +255,9 @@ class Dijkstra
 		}
 
 
-}
+};
 
-
-
+/*
 bool is_connected(bool *graph[], int size)
 {
 	int old_size =0, c_size =0;
