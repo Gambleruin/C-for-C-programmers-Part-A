@@ -21,7 +21,120 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <iterator>
 #include <queue>
 
+//graph representation
 const double max_cost = std::numeric_limits<double>::infinity();
+std::vector<std::vector<edge>> const adjM;
+
+class edge
+{
+	int destination_vertex;
+	int Cost;
+	bool is_c;
+
+	public:
+		int getDest() const {
+			return destination_vertex;
+		}
+		int getCost() const{
+			return Cost;
+		}
+		bool is_connected(edge const& e){
+			return e.is_c;
+		}
+		edge(int ver, int cost)
+			: destination_vertex(ver), Cost(cost)
+		{}
+
+	friend std::ostream& operator<<(std::ostream& s, edge const& e)
+	{
+		return s <<e.destination_vertex;
+	}
+};
+
+class graph;
+class vertex
+{   
+    friend class graph;
+    int id; 
+    std::list<edge>  list;
+
+    public:
+        vertex(int id) 
+            : id(id)
+        {}  
+    //maybe deep copy construction as well, more like an idetity function
+    bool this_vertex(vertex const& v){
+    	if(this.v =v)
+    		return true;
+    	return false;
+    }
+
+    vertex* init_v(){
+    	return this.vertex;
+    }
+
+    friend std::ostream& operator<<(std::ostream& s, vertex const& v)
+    {   
+          s << v.id << "->";
+          std::copy(v.list.begin(), v.list.end(),
+                    std::ostream_iterator<edge>(s, ","));
+          return s;
+    }   
+};
+
+class graph
+{   
+    private:
+        std::vector<vertex>   vertexes;
+        int                   next;
+
+    public:
+        graph()
+            : next(0)
+        {}  
+        // need one more deep copy constructor, to which all properties
+        // will be initialized 
+        vertex* add_node( edge const &e, vertex const &v)
+        {   
+ 			vertexes[v->id].list.push_back(edges[i]);
+        } 
+
+        std::vector<vertex> ret_vertices(){
+        	return this.vertices;
+        }
+/*
+        bool is_connected(bool *graph[], int size)
+		{
+			int old_size =0, c_size =0;
+			bool* close =new bool[size];
+			bool* open =new bool[size];
+			for(int i =0; i<size; ++i)
+				open[i] =close[i] =false;
+				open[0] =true;
+
+			//add to close, c_size =closed set sign
+			for(int i =0; i<size; ++i){
+				old_size =c_size;
+				if(open[i]){
+					close[i] =true; c_size++;			
+			}
+			for(int j =0; j<size; ++j)
+				open[j] =open[j]||graph[i][j];
+
+			//where to place??
+			if(c_size ==size) 
+				return true;
+			//else if(old_size ==c_size) return false;
+			return false;
+		}
+*/
+        friend std::ostream& operator<<(std::ostream& s, graph const& g)
+        {   
+             std::copy(g.vertexes.begin(), g.vertexes.end(),
+                       std::ostream_iterator<vertex>(s, "\n"));
+             return s;
+        }   
+};  
 
 template<typename T>
 class priorityQueue{
@@ -111,99 +224,21 @@ class priorityQueue{
 		}
 };
 
-class edge
-{
-	int destination_vertex;
-	int Cost;
-	public:
-
-		int getDest() const {
-			return destination_vertex;
-		}
-
-		int getCost() const{
-			return Cost;
-		}
-
-
-		edge(int ver, int cost)
-			: destination_vertex(ver), Cost(cost)
-		{}
-
-	friend std::ostream& operator<<(std::ostream& s, edge const& e)
-	{
-		return s <<e.destination_vertex;
-	}
-};
-
-class graph;
-class vertex
-{   
-    friend class graph;
-    int id; 
-    std::list<edge>  list;
-
-    public:
-        vertex(int id) 
-            : id(id)
-        {}  
-
-    friend std::ostream& operator<<(std::ostream& s, vertex const& v)
-    {   
-          s << v.id << "->";
-          std::copy(v.list.begin(), v.list.end(),
-                    std::ostream_iterator<edge>(s, ","));
-          return s;
-    }   
-};
-
-class graph
-{   
-    private:
-        std::vector<vertex>   vertexes;
-        int                   next;
-
-    public:
-        graph()
-            : next(0)
-        {}  
-
-        //
-        // Add a new node node 'n'
-        // The vector of edges defines what node(s) 'n' connects too.
-        //      add an edge from 'n' to each node in `edges'
-        //      add an edge from each node in `edges' to 'n'
-        //
-        // Note It is assumed that `edges` does not contain any nodes
-        //      larger than (n-1)
-        void add_node( std::vector<edge> const  &edges)
-        {   
-            vertexes.push_back(vertex(next));
-
-            for(unsigned int i=0;i<edges.size();++i)
-            {   
-               vertexes[next].list.push_back(edges[i]);
-            }   
-            ++next;
-        }   
-
-        friend std::ostream& operator<<(std::ostream& s, graph const& g)
-        {   
-             std::copy(g.vertexes.begin(), g.vertexes.end(),
-                       std::ostream_iterator<vertex>(s, "\n"));
-             return s;
-        }   
-};  
-
 template <typename T>
 class Dijkstra
 {
 	public:
-		//friend std::ostream &operator<<(std::ostream &out, Dijkstra<T, U> &g);
+
+		priorityQueue<T> init_queue(const T& item){
+			priorityQueue<T> pq;
+			return pq;
+		}
+
 		std::vector<int> DijkstraComputePaths(int source,                 
                           std::vector<std::vector<edge>> const& adjvM,
                           std::vector<int> &min_distance,
-                          std::vector<int> &previous)
+                          std::vector<int> &previous, 
+                          priorityQueue<T> pq)
 		{
 
 			int n = adjvM.size();
@@ -212,9 +247,8 @@ class Dijkstra
     		min_distance[source] = 0;
     		previous.clear();
     		previous.resize(n, -1);
-    		priorityQueue<T> pq;
-			pq.insert(min_distance[source], std::make_pair(min_distance[source], source));
 
+			pq.insert(min_distance[source], std::make_pair(min_distance[source], source));
 			while (!pq.empty()) {
 
 				int u =pq.extractMin().first;
@@ -223,7 +257,6 @@ class Dijkstra
 
         		if (dist > min_distance[u])
 	    			continue;
-	    		// Visit each edge exiting u
 				const std::vector<edge> &neighbors = adjvM[u];
 				for (std::vector<edge>::const_iterator neighbor_iter = neighbors.begin();
              			neighbor_iter != neighbors.end();
@@ -247,46 +280,33 @@ class Dijkstra
     		int vertex, const std::vector<int> &previous)
 		{
     		std::list<int> path;
-    		for ( ; vertex != -1; vertex = previous[vertex])
+    		for (; vertex != -1; vertex = previous[vertex])
         		path.push_front(vertex);
 
-        	//??? 
     		return path;
 		}
-
-
 };
 
-/*
-bool is_connected(bool *graph[], int size)
-{
-	int old_size =0, c_size =0;
-	bool* close =new bool[size];
-	bool* open =new bool[size];
-	for(int i =0; i<size; ++i)
-		open[i] =close[i] =false;
-	open[0] =true;
-
-	//add to close, c_size =closed set sign
-	for(int i =0; i<size; ++i){
-		old_size =c_size;
-		if(open[i]){
-			close[i] =true; c_size++;			
+//use in main
+void init_graph(const std::vector<edge> &edges){
+	graph *g;
+	// first step, getting all the vertices in order:
+	for (auto &it: edges){
+		// check if it is the same vertex
+		for(){
+        	if(this_vertex(v))
+				g->add_node(v, it)
 		}
-	for(int j =0; j<size; ++j)
-		open[j] =open[j]||graph[i][j];
-
-	//where to place??
-	if(c_size ==size) 
-		return true;
-	//else if(old_size ==c_size) return false;
-	return false;
+	}
+    vertices =ret_vertices();
+    for (auto &it: vertices){
+    	adjM[it] =it.list;
+    }    
 }
-*/
-
 
 int main()
 {
+
 /*
 	bool **graph;
 	srand(); //seed rand()
@@ -318,7 +338,8 @@ int main()
 		cout <<"###" <<endl;
 	}
 */
-
+	init_graph();
+	Dijkstra::DijkstraComputePaths();
 	return 0;
 }
 
