@@ -9,6 +9,7 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 #include <cstdlib> 
 #include <vector>
  
+#include <list>
 #include <limits> // for numeric_limits
 #include <set>
 #include <utility> // for pair
@@ -19,7 +20,6 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 //graph representation
 const int num_vertices =5;
 const double max_cost = std::numeric_limits<double>::infinity();
-std::vector<std::vector<edge>> const adjM;
 
 class edge
 {
@@ -34,11 +34,11 @@ class edge
 		int getCost() const{
 			return Cost;
 		}
-		bool is_connected(edge const& e){
+		bool is_connected(edge const& e) const{
 			return e.is_c;
 		}
-		edge(int ver, int cost)
-			: destination_vertex(ver), Cost(cost)
+		edge(int ver, int cost, bool Ic)
+			: destination_vertex(ver), Cost(cost), is_c(Ic)
 		{}
 
 	friend std::ostream& operator<<(std::ostream& s, edge const& e)
@@ -46,6 +46,8 @@ class edge
 		return s <<e.destination_vertex;
 	}
 };
+
+
 
 class graph;
 class vertex
@@ -59,10 +61,11 @@ class vertex
             : id(id)
         {} 
 
-    	//maybe deep copy construction as well, 
+        /*
         vertex(const vertex& copy)   
-        : i(copy.i), list(new std::vector<edge>(*copy.list))  
+        : id(copy.id), list(new std::vector<edge>(*copy.list))  
     	{}
+    	*/
 
     	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
     	{   
@@ -75,28 +78,34 @@ class vertex
 
 class graph
 {   
-    private:
+	private:
         std::vector<vertex> vertices;
+        std::vector<std::vector<edge>> adjM;
 
     public:
-        graph(const graph& copy)   
-        : i(copy.i), vertices(new std::vector<vertex> (*copy.vertices))
 
-        graph(std::vector<vertex> vs)
-        : vs(vs)
-        {}  
+        // graph(graph &g) { /* Copy data members from t*/}
+    	graph(std::vector<vertex> v, std::vector<std::vector<edge>> ajM): 
+    		vertices(v), adjM(ajM){}
 
-        void add_node( edge const &e, int id)
+        void add_node ( edge const &e, int id)
         {   
  			vertices[id].list.push_back(e);
         } 
 
-/*
-        void identify_vertices(std::vector<vertex> vs){
-        	this->vs =vertices;
+        void add_edgeList(std::vector<vertex> v)
+        {
+        	for (auto &it: v)
+    			adjM[it.id] =it.list;
         }
-*/
 
+        std::vector<vertex> getVertices(){
+        	return vertices;
+        }
+
+        std::vector<std::vector<edge>> getAdjM(){
+        	return adjM;
+        }
 
 
 /*
@@ -274,8 +283,7 @@ class Dijkstra
 			return previous;
 		}
 
-		std::list<int> DijkstraGetShortestPathTo(
-    		int v_id, const std::vector<int> &previous)
+		std::list<int> DijkstraGetShortestPathTo(int v_id, const std::vector<int> &previous)
 		{
     		std::list<int> path;
     		for (; v_id != -1; v_id = previous[v_id])
@@ -285,24 +293,30 @@ class Dijkstra
 		}
 };
 
-//use in main
-void init_graph(const std::vector<edge> &edges){
-	std::vector<vertex> vertices;
-	graph *g;
-	// deep copy constructor, dynamic memory allocation
-	g->graph(vertices);
-	for (auto &it: edges){
-		
-		for(int i, i<num_vertices, i++){
+void application(const std::vector<edge> &edges){
+
+	std::vector<vertex> v;
+	std::vector<std::vector<edge>> adjM;
+	graph g(v, adjM);
+
+	void (graph::* addN) (const edge &, int) = &graph::add_node;
+	void (graph::* addEdge) (std::vector<vertex>) = &graph::add_edgeList;
+	//std::vector<vertex> graph::*vertices = &graph::vertices;
+	for (auto &it: edges){		
+		for(int i; i<num_vertices; i++){
 				// if the edge exists
 				if(it.is_connected(it))
-					g->add_node(i, it)
+					(g.*addN) (it, i);
 		}
 	}
+	
+	v =g.getVertices();
+	(g.*addEdge)(v);
+	adjM =g.getAdjM();
 
-    for (auto &it: vertices){
-    	adjM[it] =it.list;
-    }    
+	// now the entire graph representation is in adjM
+
+      
 }
 
 int main()
@@ -340,8 +354,9 @@ int main()
 	}
 */
 
-	init_graph();
-	Dijkstra::DijkstraComputePaths();
+
+
+	//Dijkstra::DijkstraComputePaths();
 	return 0;
 }
 
