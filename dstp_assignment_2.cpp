@@ -28,6 +28,9 @@ class edge
 	bool is_c;
 
 	public:
+		edge(int ver, int cost, bool Ic)
+			: destination_vertex(ver), Cost(cost), is_c(Ic)
+		{}
 		int getDest() const {
 			return destination_vertex;
 		}
@@ -37,17 +40,13 @@ class edge
 		bool is_connected(edge const& e) const{
 			return e.is_c;
 		}
-		edge(int ver, int cost, bool Ic)
-			: destination_vertex(ver), Cost(cost), is_c(Ic)
-		{}
+
 
 	friend std::ostream& operator<<(std::ostream& s, edge const& e)
 	{
 		return s <<e.destination_vertex;
 	}
 };
-
-
 
 class graph;
 class vertex
@@ -61,11 +60,12 @@ class vertex
             : id(id)
         {} 
 
-        /*
+/*
         vertex(const vertex& copy)   
         : id(copy.id), list(new std::vector<edge>(*copy.list))  
     	{}
-    	*/
+*/
+    	
 
     	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
     	{   
@@ -90,13 +90,20 @@ class graph
 
         void add_node ( edge const &e, int id)
         {   
- 			vertices[id].list.push_back(e);
+        	vertices.push_back(vertex(id));
+        	for(int i =0; i<num_vertices; i++){
+        		printf("the id is: %d\n\n\n\n", vertices[id].id);
+ 				vertices[id].list.push_back(e);
+ 			}
         } 
 
         void add_edgeList(std::vector<vertex> v)
         {
         	for (auto &it: v)
+        	{
+        		printf("kuai jin lai, ni mian hao shu fu\n\n\n");
     			adjM[it.id] =it.list;
+    		}
         }
 
         std::vector<vertex> getVertices(){
@@ -298,20 +305,25 @@ void application(const std::vector<edge> &edges){
 	std::vector<vertex> v;
 	std::vector<std::vector<edge>> adjM;
 	graph g(v, adjM);
+	int next =0;
 
-	void (graph::* addN) (const edge &, int) = &graph::add_node;
-	void (graph::* addEdge) (std::vector<vertex>) = &graph::add_edgeList;
-	//std::vector<vertex> graph::*vertices = &graph::vertices;
-	for (auto &it: edges){		
-		for(int i; i<num_vertices; i++){
-				// if the edge exists
-				if(it.is_connected(it))
-					(g.*addN) (it, i);
-		}
+	//void (graph::* addN) (const edge &, int) = &graph::add_node;
+	//void (graph::* addEdge) (std::vector<vertex>) = &graph::add_edgeList;
+	for (auto &it: edges){	
+			/*
+				if(it.is_connected(it)){
+					printf("wtf\n");
+					g.add_node(it, i);
+
+				}
+			*/
+		    g.add_node(it, i);
+		
 	}
-	
+	printf("wtf\n");
 	v =g.getVertices();
-	(g.*addEdge)(v);
+	//(g.*addEdge)(v);
+	g.add_edgeList(v);
 	adjM =g.getAdjM();
 
 	// now the entire graph representation is in adjM
@@ -353,8 +365,21 @@ int main()
 		cout <<"###" <<endl;
 	}
 */
-
-
+	std::vector<edge> edges;
+	edge e0 (0,1,true);
+	edge e1 (1,1,true);
+	edge e2 (2,1,true);
+	edge e3 (3,1,true);
+	edges.push_back(e0);
+	edges.push_back(e1);
+	edges.push_back(e2);
+	edges.push_back(e3);
+	/*
+	for(auto const& value: edges) {
+		std::cout << value.getCost(); 
+	}
+	*/
+	application(edges);
 
 	//Dijkstra::DijkstraComputePaths();
 	return 0;
