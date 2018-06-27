@@ -3,6 +3,7 @@ dijkstra_stl_template practise in c++
 for the reference where dijkstra can be proved to be true:
 http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture11.pdf
 */
+
 #include <iostream>   
 #include <sstream>
 #include <cstdio>  
@@ -21,22 +22,25 @@ http://web.stanford.edu/class/archive/cs/cs161/cs161.1176/Lectures/CS161Lecture1
 const int num_vertices =5;
 const double max_cost = std::numeric_limits<double>::infinity();
 
+class graph;
 class edge
 {
-	int destination_vertex;
+	friend class graph;
+	int end;
 	int Cost;
 	bool is_c;
 
 	public:
 		edge(int ver, int cost, bool Ic)
-			: destination_vertex(ver), Cost(cost), is_c(Ic)
+			: end(ver), Cost(cost), is_c(Ic)
 		{}
 		int getDest() const {
-			return destination_vertex;
+			return end;
 		}
 		int getCost() const{
 			return Cost;
 		}
+
 		bool is_connected(edge const& e) const{
 			return e.is_c;
 		}
@@ -44,7 +48,7 @@ class edge
 
 	friend std::ostream& operator<<(std::ostream& s, edge const& e)
 	{
-		return s <<e.destination_vertex;
+		return s <<e.end;
 	}
 };
 
@@ -65,8 +69,11 @@ class vertex
         : id(copy.id), list(new std::vector<edge>(*copy.list))  
     	{}
 */
-    	
 
+        /*
+			need to add query function, returns the ith neighbor in the adjacency list of v, 
+			or null if there is no such neighbor.
+        */
     	friend std::ostream& operator<<(std::ostream& s, vertex const& v)
     	{   
         	s << v.id << "->";
@@ -83,29 +90,26 @@ class graph
         std::vector<std::vector<edge>> adjM;
 
     public:
-
-        // graph(graph &g) { /* Copy data members from t*/}
-    	graph(std::vector<vertex> v, std::vector<std::vector<edge>> ajM): 
-    		vertices(v), adjM(ajM){}
-
-        void add_node ( edge const &e, int id)
-        {   
-        	vertices.push_back(vertex(id));
-        	for(int i =0; i<num_vertices; i++){
-        		printf("the id is: %d\n\n\n\n", vertices[id].id);
- 				vertices[id].list.push_back(e);
- 			}
-        } 
+    	graph()	{}
 
         void add_edgeList(std::vector<vertex> v)
         {
         	for (auto &it: v)
-        	{
-        		printf("kuai jin lai, ni mian hao shu fu\n\n\n");
-    			adjM[it.id] =it.list;
-    		}
+    			adjM[it.id] =it.list;	
         }
 
+        int getId (vertex const &v) const{
+        	return v.id;
+        }
+
+        void setEdges(edge &e, vertex &v) {
+        	v.list.push_back(e);
+        	e.is_c =true;
+        }
+
+        std::vector<edge> getEdges (vertex const &v) const{
+        	return v.list;
+        }
         std::vector<vertex> getVertices(){
         	return vertices;
         }
@@ -114,39 +118,11 @@ class graph
         	return adjM;
         }
 
-
-/*
-        bool is_connected(bool *graph[], int size)
-		{
-			int old_size =0, c_size =0;
-			bool* close =new bool[size];
-			bool* open =new bool[size];
-			for(int i =0; i<size; ++i)
-				open[i] =close[i] =false;
-				open[0] =true;
-
-			//add to close, c_size =closed set sign
-			for(int i =0; i<size; ++i){
-				old_size =c_size;
-				if(open[i]){
-					close[i] =true; c_size++;			
-			}
-			for(int j =0; j<size; ++j)
-				open[j] =open[j]||graph[i][j];
-
-			//where to place??
-			if(c_size ==size) 
-				return true;
-			//else if(old_size ==c_size) return false;
-			return false;
-		}
-*/
-
         friend std::ostream& operator<<(std::ostream& s, graph const& g)
         {   
-             std::copy(g.vertices.begin(), g.vertices.end(),
-                       std::ostream_iterator<vertex>(s, "\n"));
-             return s;
+            std::copy(g.vertices.begin(), g.vertices.end(),
+                std::ostream_iterator<vertex>(s, "\n"));
+            return s;
         }   
 };  
 
@@ -300,36 +276,11 @@ class Dijkstra
 		}
 };
 
-void application(const std::vector<edge> &edges){
+/*
+bool graph_is_connected(graph const& g){
 
-	std::vector<vertex> v;
-	std::vector<std::vector<edge>> adjM;
-	graph g(v, adjM);
-	int next =0;
-
-	//void (graph::* addN) (const edge &, int) = &graph::add_node;
-	//void (graph::* addEdge) (std::vector<vertex>) = &graph::add_edgeList;
-	for (auto &it: edges){	
-			/*
-				if(it.is_connected(it)){
-					printf("wtf\n");
-					g.add_node(it, i);
-
-				}
-			*/
-		    g.add_node(it, i);
-		
-	}
-	printf("wtf\n");
-	v =g.getVertices();
-	//(g.*addEdge)(v);
-	g.add_edgeList(v);
-	adjM =g.getAdjM();
-
-	// now the entire graph representation is in adjM
-
-      
 }
+*/
 
 int main()
 {
@@ -366,22 +317,38 @@ int main()
 	}
 */
 	std::vector<edge> edges;
-	edge e0 (0,1,true);
-	edge e1 (1,1,true);
-	edge e2 (2,1,true);
-	edge e3 (3,1,true);
+	edge e0 (0,1,false);
+	edge e1 (1,1,false);
+	edge e2 (2,1,false);
+	edge e3 (3,1,false);
 	edges.push_back(e0);
 	edges.push_back(e1);
 	edges.push_back(e2);
 	edges.push_back(e3);
-	/*
-	for(auto const& value: edges) {
-		std::cout << value.getCost(); 
+	int id =0;
+	bool is_cont =false;
+	graph *g;
+	std::vector<vertex> vertices;
+	vertices.push_back(vertex(id));
+/*
+	for(auto const& value: vertices) {
+		printf("\n\n\n\n");
+		std::cout << g->getId(value); 
+		printf("\n\n\n\n");
+		g->setEdges(e0, value);
+		edges =g->getEdges(value);
+		for(auto const& it: edges){
+			is_cont =it.is_connected(e0);
+			std::cout << is_cont << std::endl;
+		}
+		//g->add_node(value, 0);
 	}
-	*/
-	application(edges);
-
-	//Dijkstra::DijkstraComputePaths();
+	
+	for(auto const& value: edges) {
+		//std::cout << value.getCost(); 
+		g->add_node(value, 0);
+	}
+	*/	
 	return 0;
 }
 
