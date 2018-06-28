@@ -17,15 +17,23 @@
 using namespace std;
  
 #define MAX_VERTEX_NUM 600
-#define INFINITY 1000000//define infinity 
+#define INFINITY 1000000
  
 //each node to which path in graph can be found has its own property
 struct GraphNode{
     bool known;//if there exists a path to which source node is connected to the current node
     int dist;//shortest path between current node and source node
     int path;//the previous node on the path
+    int id; //to which graph node it  corresponds
+    bool operator <(const GraphNode &x) const //operator overload
+    {
+    	if(x.dist !=dist)
+    		return x.dist <dist;
+    	else
+    		return false;
+    }
 };
- 
+
 typedef struct Node{ 
     int edge_num;
     int src;
@@ -46,6 +54,7 @@ class Graph{
         ~Graph();
         void print();
         void dijkstra(int src);
+        void dijkstra_stl_pq(int src);
         void printShorestPath(); 
     private:
         vector<int> get_graph_value(char* graph[], int columns);

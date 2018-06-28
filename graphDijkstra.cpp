@@ -1,5 +1,6 @@
 #include "graphDijkstra.h"
 
+//dijkstra without using priority queue
 void Graph::dijkstra(int src)
 {
     //init
@@ -27,7 +28,7 @@ void Graph::dijkstra(int src)
             break;
  
         nodeArr[v].known = true;
-        //update v's neighbors 
+        // update v's neighbors 
         for(list<Node>::iterator it = graph_list[v].begin(); it != graph_list[v].end(); ++it){
             if(!nodeArr[(*it).vertex].known){
                 if(nodeArr[v].dist + (*it).weight < nodeArr[(*it).vertex].dist){
@@ -36,8 +37,44 @@ void Graph::dijkstra(int src)
                 }
             }
         }
- 
     }
+}
+
+//dijkstra with using priority queue
+void Graph::dijkstra_stl_pq(int src){
+	priority_queue<GraphNode> que;
+
+    for(int i = 0; i < vertex_num; ++i){
+        nodeArr[i].known = false;
+        nodeArr[i].dist = INFINITY;
+        nodeArr[i].path = 0;
+
+    }
+
+    nodeArr[src].dist = 0;
+    nodeArr[src].id =src;
+
+	//init the queue with the source
+	que.push(nodeArr[src]);
+
+	while(!que.empty()){
+		GraphNode front =que.top();
+		que.pop();
+
+		front.known = true;
+		int v =front.id;
+		// update front's neighbors
+		for(list<Node>::iterator it = graph_list[v].begin(); it != graph_list[v].end(); ++it){
+            if(!nodeArr[(*it).vertex].known){
+                if(nodeArr[v].dist + (*it).weight < nodeArr[(*it).vertex].dist){
+                    nodeArr[(*it).vertex].dist = nodeArr[v].dist + (*it).weight;
+                    nodeArr[(*it).vertex].path = v;
+                    nodeArr[(*it).vertex].id = (*it).vertex;
+                    que.push(nodeArr[(*it).vertex]);
+                }
+            }
+        }
+	}
 }
 
 void Graph::printShorestPath()
@@ -55,7 +92,7 @@ void Graph::print()
         if(graph_list[i].begin() != graph_list[i].end()){
             cout << i << "-->";
             for(list<Node>::iterator it = graph_list[i].begin(); it != graph_list[i].end(); ++it){
-                cout << (*it).vertex << "(边号:" << (*it).edge_num << ",权重:" << (*it).weight << ")-->";
+                cout << (*it).vertex << "(edge id:" << (*it).edge_num << ",weight:" << (*it).weight << ")-->";
             }
             cout << "NULL" << endl;
         }
@@ -115,7 +152,6 @@ void Graph::addEdge(char* graph[], int columns)
  
     graph_list[node.src].push_back(node);
 }
- 
  
 // init the graph with adjacency lists
 Graph::Graph(char* graph[], int edgenum):nodeArr(MAX_VERTEX_NUM)
