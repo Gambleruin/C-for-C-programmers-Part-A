@@ -18,8 +18,8 @@ using namespace std;
  
 #define MAX_VERTEX_NUM 600
 #define INFINITY 1000000
- 
-//each node to which path in graph can be found has its own property
+
+/*
 struct GraphNode{
     bool known;//if there exists a path to which source node is connected to the current node
     int dist;//shortest path between current node and source node
@@ -33,20 +33,38 @@ struct GraphNode{
     		return false;
     }
 };
+*/
 
 typedef struct Node{ 
-    int edge_num;
+    //int edge_num;
     int src;
-    int vertex;//self 
-    int weight;
+    int id; //self 
+
+    //added
+    bool known;//if there exists a path to which source node is connected to the current node
+    int dist;//shortest path between current node and source node
+
+    Node(int v): id(v){}
+
+    bool operator <(const Node &x) const //operator overload
+    {
+    	if(x.dist !=dist)
+    		return x.dist <dist;
+    	else
+    		return false;
+    }    
 }Node; 
 
 class Graph{
     private:
         int edge_num;
         int vertex_num;
-        list<Node> * graph_list;//adjacency list
-        vector<GraphNode> nodeArr;//graph of nodes to be run on dijkstra 
+        list<Node> *graph_list;//adjacency list
+        // vector<GraphNode> nodeArr; (from old code)
+        // the original data structure
+        // will be replaced by an array of previous_distance, record
+        // for computing dijkstra 
+        vector<int> min_distance;
         
     public:
         Graph(){}
