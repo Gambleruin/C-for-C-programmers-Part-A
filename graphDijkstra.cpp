@@ -60,9 +60,11 @@ void Graph::dijkstra_stl_pq(int src){
 	while(!que.empty()){
 		GraphNode front =que.top();
 		que.pop();
-
-		front.known = true;
 		int v =front.id;
+		if (nodeArr[v].dist < front.dist) 
+			continue;
+
+		nodeArr[v].known = true;
 		// update front's neighbors
 		for(list<Node>::iterator it = graph_list[v].begin(); it != graph_list[v].end(); ++it){
             if(!nodeArr[(*it).vertex].known){

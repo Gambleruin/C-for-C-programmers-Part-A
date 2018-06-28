@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     }
  
     int src;
-    cout << "输入求最短路径的起点：";
+    cout << "enter the source：";
     cin >> src;
  
     Graph G(topo, edge_num);
