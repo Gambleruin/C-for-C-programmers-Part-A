@@ -43,8 +43,9 @@ typedef struct Node{
     //added
     bool known;//if there exists a path to which source node is connected to the current node
     int dist;//shortest path between current node and source node
+    int path;//the previous node on the path
 
-    Node(int v): id(v){}
+    Node(){}
 
     bool operator <(const Node &x) const //operator overload
     {
@@ -61,21 +62,18 @@ class Graph{
         int vertex_num;
         list<Node> *graph_list;//adjacency list
         // vector<GraphNode> nodeArr; (from old code)
-        // the original data structure
-        // will be replaced by an array of previous_distance, record
-        // for computing dijkstra 
-        vector<int> min_distance;
         
     public:
         Graph(){}
-        Graph(char* graph[], int edgenum); 
+        Graph(char* graph[], int edgenum);
         ~Graph();
         void print();
+        //void dijkstra(int src);
         void dijkstra(int src);
-        void dijkstra_stl_pq(int src);
         void printShorestPath(); 
     private:
         vector<int> get_graph_value(char* graph[], int columns);
+        Node Init(int edge_num, int id, int dist);
         void addEdge(char* graph[], int columns);
 };
  
