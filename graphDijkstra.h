@@ -46,15 +46,27 @@ typedef struct Node{
     int path;//the previous node on the path
 
     Node(){}
-
+/*
     bool operator <(const Node &x) const //operator overload
     {
     	if(x.dist !=dist)
-    		return x.dist <dist;
+    		return x.dist >dist;
     	else
     		return false;
     }    
+*/
 }Node; 
+
+template<typename T> void print_queue(T& q){
+    while(!q.empty()){
+        cout <<q.top().dist << " ";
+        q.pop();
+    }
+    cout << '\n';
+}
+
+//pair up both distance and vertex id
+typedef pair<int, int> GraphNode_pair;
 
 class Graph{
     private:
@@ -64,16 +76,19 @@ class Graph{
         // vector<GraphNode> nodeArr; (from old code)
         
     public:
+
+        //template<typename T> void print_queue(T& q);
+
         Graph(){}
         Graph(char* graph[], int edgenum);
         ~Graph();
         void print();
-        //void dijkstra(int src);
+        Node Init(int src, int id, int dist);
         void dijkstra(int src);
         void printShorestPath(); 
     private:
         vector<int> get_graph_value(char* graph[], int columns);
-        Node Init(int edge_num, int id, int dist);
+        
         void addEdge(char* graph[], int columns);
 };
  

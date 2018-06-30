@@ -95,37 +95,44 @@ Graph::~Graph()
 //dijkstra with using priority queue
 void Graph::dijkstra(int src)
 {
-    int edgenum =0;
+    auto cmp =[](Node left, Node right) { 
+        return left.dist > right.dist;
+    };
+
+    priority_queue<Node, vector<Node>, decltype(cmp)> que(cmp);
 	// Init position to be added at the front of queue (starting dijkstra)
 	Node front =Init(src, src, 0);
 	// check the logic of priority queue, making sure that it is right
-	priority_queue<Node> que;
+	//priority_queue<Node> que;
     vector<int> m_distance(10);
     fill(m_distance.begin(), m_distance.end(), INFINITY);
-
     m_distance[src]= 0;
 
 	// init the queue with the source
-	que.push(front);
+    que.push(front);
 	while(!que.empty()){
+        print_queue(que);
+        printf("\n\n\n");
 		Node front =que.top();
+        int v =front.id;
+        int update_dist =front.dist;
 		que.pop();
-		int v =front.id;
+
 		// Because we leave old copies of the vertex in the priority queue
 	    // (with outdated higher distances), we need to ignore it when we come
 	    // across it again, by checking its distance against the minimum distance
-		if (m_distance[v] < front.dist) 
+		if (m_distance[v] < update_dist) 
 			continue;
 
 		front.known = true;
 		// update front's neighbors
 		for(list<Node>::iterator it = graph_list[v].begin(); it != graph_list[v].end(); ++it){
             if(!(*it).known){
-                // small n stands for neighbor
-                int distance_through_n =front.dist +(*it).dist;
+
+                int distance_through =update_dist +(*it).dist;
                 int neighbor_id =(*it).id;
-                if(distance_through_n < m_distance[neighbor_id]){
-                    m_distance[neighbor_id] = distance_through_n;
+                if(distance_through < m_distance[neighbor_id]){
+                    m_distance[neighbor_id] = distance_through;
                     //followed by previous node on path
                     (*it).path = v;
                     //nodeArr[(*it).vertex].id = (*it).vertex;
@@ -135,6 +142,7 @@ void Graph::dijkstra(int src)
         }
 	}
 }
+
 
 void Graph::printShorestPath()
 {
