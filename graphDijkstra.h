@@ -66,7 +66,7 @@ template<typename T> void print_queue(T& q){
 }
 
 //pair up both distance and vertex id
-typedef pair<int, int> GraphNode_pair;
+//typedef pair<int, int> GraphNode_pair;
 
 class Graph{
     private:
@@ -78,7 +78,6 @@ class Graph{
     public:
 
         //template<typename T> void print_queue(T& q);
-
         Graph(){}
         Graph(char* graph[], int edgenum);
         ~Graph();
@@ -87,8 +86,7 @@ class Graph{
         void dijkstra(int src);
         void printShorestPath(); 
     private:
-        vector<int> get_graph_value(char* graph[], int columns);
-        
+        vector<int> get_graph_value(char* graph[], int columns);       
         void addEdge(char* graph[], int columns);
 };
  

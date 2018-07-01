@@ -77,13 +77,6 @@ Graph::Graph(char* graph[], int edgenum)
     for(int i = 0; i < edgenum; ++i){
         addEdge(graph, i);   
     }
-/*
-    for(int i = 0; i < 10; ++i){
-        for(Node &n :graph_list[i]){
-            
-        }
-    }
-*/
 }
 
 //release dynamic memory
@@ -103,7 +96,7 @@ void Graph::dijkstra(int src)
 	// Init position to be added at the front of queue (starting dijkstra)
 	Node front =Init(src, src, 0);
 	// check the logic of priority queue, making sure that it is right
-	//priority_queue<Node> que;
+	// priority_queue<Node> que;
     vector<int> m_distance(10);
     fill(m_distance.begin(), m_distance.end(), INFINITY);
     m_distance[src]= 0;
@@ -111,12 +104,17 @@ void Graph::dijkstra(int src)
 	// init the queue with the source
     que.push(front);
 	while(!que.empty()){
-        print_queue(que);
-        printf("\n\n\n");
+        for (int i=0; i < m_distance.size(); i++) {
+            cout<< m_distance[i]<<"\n";
+        }
+
+        //print_queue(que);
+        //printf("\n\n\n");
 		Node front =que.top();
         int v =front.id;
         int update_dist =front.dist;
 		que.pop();
+        printf("current front is: \n\n%d\n\n\n\n\n", v);
 
 		// Because we leave old copies of the vertex in the priority queue
 	    // (with outdated higher distances), we need to ignore it when we come
@@ -157,6 +155,7 @@ void Graph::printShorestPath()
 
 void Graph::print()
 {
+    int vertex_num =12;
     for(int i = 0 ; i < vertex_num; ++i){
         if(graph_list[i].begin() != graph_list[i].end()){
             cout << i << "-->";

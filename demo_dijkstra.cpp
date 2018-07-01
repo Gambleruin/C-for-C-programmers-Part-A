@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
     G.dijkstra(src);
     G.printShorestPath();
  
- 
     release_buff(topo, edge_num);
 	return 0;
 }
