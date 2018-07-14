@@ -74,9 +74,9 @@ class Graph{
         int vertex_num;
         list<Node> *graph_list;//adjacency list
         // vector<GraphNode> nodeArr; (from old code)
+        vector<Node> log_on_nodes; 
         
     public:
-
         //template<typename T> void print_queue(T& q);
         Graph(){}
         Graph(char* graph[], int edgenum);
@@ -84,7 +84,9 @@ class Graph{
         void print();
         Node Init(int src, int id, int dist);
         void dijkstra(int src);
-        void printShorestPath(); 
+        void Log(int src);
+        void printShortestPath();
+
     private:
         vector<int> get_graph_value(char* graph[], int columns);       
         void addEdge(char* graph[], int columns);

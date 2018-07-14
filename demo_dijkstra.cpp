@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
  
     char *topo_file = argv[1];
     edge_num = read_file(topo, 5000, topo_file);
+    printf("the number of edges is %d\n", edge_num);
     if (edge_num == 0)
     {
         printf("Please input valid topo file.\n");
@@ -35,11 +36,12 @@ int main(int argc, char *argv[])
     cin >> src;
  
     Graph G(topo, edge_num);
-    G.print();
+    //G.print();
     
     cout << "Dijkstra: " << endl;
+    G.Log(src);
     G.dijkstra(src);
-    G.printShorestPath();
+    //G.printShorestPath();
  
     release_buff(topo, edge_num);
 	return 0;

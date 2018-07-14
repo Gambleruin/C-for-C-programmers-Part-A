@@ -1,6 +1,6 @@
 #include "graphDijkstra.h"
 
-using Iter = std::vector<int>::const_iterator;
+using Iter = std::vector<Node>::iterator;
 //init a node 
 Node Graph::Init(int src, int id, int dist)
 {
@@ -12,6 +12,15 @@ Node Graph::Init(int src, int id, int dist)
     node.path =-1;
     node.known =false;
     return node;
+}
+
+// this function is to log graph info and report shortest distance
+void Graph::Log(int src){
+    for (int i = 0; i < 7; ++i){
+        Node node;
+        node =Init(src, i+1, INFINITY);
+        log_on_nodes.push_back(node);
+    }
 }
 
 //save all edge info into a vector
@@ -88,6 +97,7 @@ Graph::~Graph()
 //dijkstra with using priority queue
 void Graph::dijkstra(int src)
 {
+    int debug =0;
     auto cmp =[](Node left, Node right) { 
         return left.dist > right.dist;
     };
@@ -95,26 +105,31 @@ void Graph::dijkstra(int src)
     priority_queue<Node, vector<Node>, decltype(cmp)> que(cmp);
 	// Init position to be added at the front of queue (starting dijkstra)
 	Node front =Init(src, src, 0);
-	// check the logic of priority queue, making sure that it is right
-	// priority_queue<Node> que;
+
     vector<int> m_distance(10);
     fill(m_distance.begin(), m_distance.end(), INFINITY);
     m_distance[src]= 0;
 
 	// init the queue with the source
     que.push(front);
-	while(!que.empty()){
-        for (int i=0; i < m_distance.size(); i++) {
-            cout<< m_distance[i]<<"\n";
-        }
 
-        //print_queue(que);
-        //printf("\n\n\n");
+    //init log
+    log_on_nodes[src -1].dist =0;
+    log_on_nodes[src -1].path =0;
+
+	while(!que.empty()){
+
+        printShortestPath();
+        if (debug == 7)
+            break;
+
 		Node front =que.top();
         int v =front.id;
+        int p =front.path;
         int update_dist =front.dist;
 		que.pop();
-        printf("current front is: \n\n%d\n\n\n\n\n", v);
+
+        //printf("current front is: \n\n%d\n\n\n\n\n", v);
 
 		// Because we leave old copies of the vertex in the priority queue
 	    // (with outdated higher distances), we need to ignore it when we come
@@ -123,6 +138,12 @@ void Graph::dijkstra(int src)
 			continue;
 
 		front.known = true;
+
+        //update log information
+        int idx =v-1;
+
+        log_on_nodes[idx].known =true;
+    
 		// update front's neighbors
 		for(list<Node>::iterator it = graph_list[v].begin(); it != graph_list[v].end(); ++it){
             if(!(*it).known){
@@ -135,22 +156,27 @@ void Graph::dijkstra(int src)
                     (*it).path = v;
                     //nodeArr[(*it).vertex].id = (*it).vertex;
                     que.push((*it));
+
+                    //update log
+                    log_on_nodes[neighbor_id -1].path =v;
+                    log_on_nodes[neighbor_id -1].dist =distance_through;
                 }
             }
         }
+        
+        cout << "\n";
+        debug++;
 	}
 }
 
-
-void Graph::printShorestPath()
-{
-    cout << "Node\t" << "known\t" << "dist\t" << "path" << endl;
-    int i=0;
-    for(Node &n :graph_list[i]){
-        printf("was I being here? ");
-        if(n.known) 
-            cout << i <<"\t" << n.known << "\t" << n.dist << "\t" << n.path << endl;
+void Graph::printShortestPath()
+{   
+    cout << "v\t" << "known\t" << "dv\t" << "pv" << endl;
+    for (Iter it = log_on_nodes.begin(); it!=log_on_nodes.end(); ++it) {
+        //if(it->known) 
+            cout << it->id <<"\t" << it->known << "\t" << it->dist << "\t" << it->path << endl;
     }
+
 }
 
 void Graph::print()
@@ -158,9 +184,9 @@ void Graph::print()
     int vertex_num =12;
     for(int i = 0 ; i < vertex_num; ++i){
         if(graph_list[i].begin() != graph_list[i].end()){
-            cout << i << "-->";
             for(list<Node>::iterator it = graph_list[i].begin(); it != graph_list[i].end(); ++it){
-                cout << (*it).id << "weight:" << (*it).dist << "-->";
+                cout << i << "-->";
+                cout << (*it).id << "\tweight:" << (*it).dist << "\n";
             }
             cout << "NULL" << endl;
         }
